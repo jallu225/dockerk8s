@@ -11,12 +11,7 @@ node {
     stage('Maven Build'){
         sh 'mvn clean install'
     }
-    stage('Static Code Analysis'){
-        withSonarQubeEnv(credentialsId: 'sonar-token') {
-            sh 'mvn clean package sonar:sonar'
-         }
-    }
-    stage('Quality Gate Status'){
-        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+    stage('upload artifacts to nexus'){
+        nexusArtifactUploader artifacts: [[artifactId: 'MavenWeb', classifier: '', file: 'target/MavenWeb.war', type: 'war']], credentialsId: 'nexus-cred', groupId: 'com.example', nexusUrl: '192.168.56.112:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-web', version: '1.0.0'
     }
 }
