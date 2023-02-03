@@ -11,4 +11,12 @@ node {
     stage('Maven Build'){
         sh 'mvn clean install'
     }
+    stage('Static Code Analysis'){
+        withSonarQubeEnv(credentialsId: 'sonar-token') {
+            sh 'mvn clean package sonar:sonar'
+         }
+    }
+    stage('Quality Gate Status'){
+        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+    }
 }
