@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rja-app
+  labels:
+    app: regapp
+spec:
+  replicas: 2
+  selector:
+    mathLabels:
+     app: regapp
+  template:
+    metadata:
+     labels:
+       app: regapp
+    spec:
+     containers:
+     - name: regapp
+       image: rajesh1218/dockerk8s
+       imagePullPolicy: Always
+       ports:
+       - containerPort: 8080
+  stragey:
+   type: RollingUpdate
+   rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1     

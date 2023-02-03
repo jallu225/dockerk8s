@@ -28,4 +28,21 @@ node {
             sh "docker rmi $JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.latest"
         }
     }
+    stage("SSH Into k8s Server") {
+        def remote = [:]
+        remote.name = 'K8S master'
+        remote.host = '192.168.56.111'
+        remote.user = 'vagrant'
+        remote.password = 'vagrant'
+        remote.allowAnyHosts = true
+        
+        stage('Put deployment.yml& service.yml onto k8smaster') {
+            sshPut remote: remote, from: 'deploy.yml', into: '.'
+            sshPut remote: remote, from: 'service.yml', into: '.'
+        }
+        stage('Deploy spring boot to k8s') {
+            sshCommand remote: remote, command: "kubectl apply -f deploy.yml"
+            sshCommand remote: remote, command: "kubectl apply -f service.yml"  
+        }
+    }
 }
