@@ -20,10 +20,12 @@ node {
         sh "docker tag $JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.latest"
     }
     stage('psuh to docker hub'){
-        sh "docker login -u rajesh1218 -p Anki@1218"
-        sh "docker push rajesh1218/$JOB_NAME:v1.$BUILD_ID"
-        sh "docker push rajesh1218/$JOB_NAME:v1.latest"
+        withCredentials([string(credentialsId: 'docker-hub-pass', variable: 'docker_pass')]) {
+            sh "docker login -u rajesh1218 -p ${docker_pass}"
+            sh "docker push rajesh1218/$JOB_NAME:v1.$BUILD_ID"
+            sh "docker push rajesh1218/$JOB_NAME:v1.latest"
 
-        sh "docker rmi $JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.latest"
+            sh "docker rmi $JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.$BUILD_ID rajesh1218/$JOB_NAME:v1.latest"
+        }
     }
 }
